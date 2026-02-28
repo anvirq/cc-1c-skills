@@ -2562,7 +2562,7 @@ function resolveFfmpeg(explicit) {
   // 5. Error with instructions
   throw new Error(
     'ffmpeg not found. Install it:\n' +
-    '  - Download from https://ffmpeg.org/download.html\n' +
+    '  - Download from https://www.gyan.dev/ffmpeg/builds/ (essentials build)\n' +
     '  - Add to PATH, or set FFMPEG_PATH env var, or place in tools/ffmpeg/bin/\n' +
     '  - Or pass ffmpegPath option to startRecording()'
   );

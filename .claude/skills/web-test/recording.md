@@ -4,38 +4,46 @@ Record browser automation sessions as MP4 video files. Uses CDP `Page.startScree
 
 ## Prerequisites
 
-**ffmpeg** must be installed. The binary is resolved in this order:
+**ffmpeg** must be installed. Choose один из вариантов:
 
-1. `opts.ffmpegPath` parameter in `startRecording()`
-2. `FFMPEG_PATH` environment variable
-3. `ffmpeg` in system PATH
-4. `tools/ffmpeg/bin/ffmpeg.exe` relative to project root
+### Вариант 1: в проект (рекомендуется)
 
-### Install ffmpeg on Windows
+Скачать essentials build с https://www.gyan.dev/ffmpeg/builds/, распаковать в `tools/ffmpeg/` проекта:
 
-Download from https://ffmpeg.org/download.html (Windows builds by gyan.dev or BtbN).
-Extract and either:
-- Add `bin/` to system PATH
-- Set environment variable: `$env:FFMPEG_PATH = "C:\tools\ffmpeg\bin\ffmpeg.exe"`
-- Place in project: `tools/ffmpeg/bin/ffmpeg.exe`
+```
+tools/ffmpeg/
+├── bin/
+│   ├── ffmpeg.exe      ← этот файл ищет startRecording()
+│   ├── ffplay.exe
+│   └── ffprobe.exe
+└── ...
+```
 
-### Shared path via .v8-project.json
+Код автоматически найдёт `tools/ffmpeg/bin/ffmpeg.exe` — ничего больше настраивать не нужно.
 
-To avoid installing per-project, add `ffmpegPath` to `.v8-project.json`:
+### Вариант 2: глобально (один раз на машину)
+
+Скачать, распаковать в любой каталог (напр. `C:\tools\ffmpeg`), добавить `bin/` в системный PATH.
+После этого ffmpeg доступен во всех проектах.
+
+### Вариант 3: через .v8-project.json (общий путь)
+
+Чтобы не копировать ffmpeg в каждый проект, указать путь в конфиге:
 
 ```json
 {
-  "v8path": "...",
-  "ffmpegPath": "C:\\tools\\ffmpeg\\bin\\ffmpeg.exe",
-  "databases": [...]
+  "ffmpegPath": "C:\\tools\\ffmpeg\\bin\\ffmpeg.exe"
 }
 ```
 
-When calling `startRecording()`, read this field and pass it:
+Модель прочитает это поле и передаст в `startRecording({ ffmpegPath })`.
 
-```js
-await startRecording('output.mp4', { ffmpegPath: 'C:\\tools\\ffmpeg\\bin\\ffmpeg.exe' });
-```
+### Порядок поиска ffmpeg
+
+1. `opts.ffmpegPath` — явный путь (из `.v8-project.json` или параметра)
+2. `FFMPEG_PATH` — переменная окружения
+3. `ffmpeg` — в системном PATH
+4. `tools/ffmpeg/bin/ffmpeg.exe` — относительно корня проекта
 
 ## API
 
