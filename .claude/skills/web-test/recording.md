@@ -112,7 +112,39 @@ The overlay covers the entire viewport with `z-index: 999999` and `pointer-event
 
 Remove the title slide overlay.
 
-## Example: Record a workflow with title slide and captions
+### `setHighlight(on)`
+
+Enable or disable auto-highlight mode. When enabled, action functions (`navigateSection`, `openCommand`, `clickElement`, `selectValue`, `fillFields`) automatically highlight the target element for 500ms before performing the action.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `on` | boolean | `true` to enable, `false` to disable |
+
+**How it works**: each action highlights the element → waits 500ms (viewer reads) → removes highlight → performs the action. This prevents the highlight overlay from interfering with modals, dropdowns, or focus changes caused by the action.
+
+**Search priority**: form elements (buttons, links, fields, grid rows) are searched first. Sections and commands are used as fallback only if the element is not found in the current form. This avoids false matches (e.g., "ОК" matching section "Покупки" via substring).
+
+### `isHighlightMode()` → boolean
+
+Check if auto-highlight mode is active.
+
+### `highlight(text)`
+
+Manually highlight a UI element by name (fuzzy match). Places a semi-transparent blue overlay (`rgba(0,100,255,0.25)`) with a border on the element. The overlay tracks element position via `requestAnimationFrame`.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `text` | string | Element name — button, link, field, section, or command |
+
+- Fuzzy match order: exact → startsWith → includes
+- Searches form elements first, then sections/commands
+- `pointer-events: none` — does not block clicks
+
+### `unhighlight()`
+
+Remove the highlight overlay.
+
+## Example: Record a workflow with highlight, title slide, and captions
 
 ```js
 await startRecording('recordings/create-order.mp4');
@@ -121,8 +153,9 @@ await startRecording('recordings/create-order.mp4');
 await showTitleSlide('Создание заказа клиента', { subtitle: 'Демонстрация' });
 await wait(4);
 await hideTitleSlide();
+setHighlight(true); // enable auto-highlight for all actions
 
-// Steps: caption → pause → action
+// Steps: caption → pause → action (highlight is automatic)
 await showCaption('Шаг 1. Переходим в раздел «Продажи»');
 await wait(1.5);
 await navigateSection('Продажи');
@@ -142,11 +175,14 @@ await fillFields({ 'Организация': 'Конфетпром', 'Контр
 await wait(1);
 
 await hideCaption();
+setHighlight(false);
 const result = await stopRecording();
 console.log(`Recorded ${result.duration}s, ${(result.size / 1024 / 1024).toFixed(1)} MB`);
 ```
 
 **Caption timing**: show the caption *before* the action with a `wait(1.5)` pause — the viewer reads what will happen, then sees it happen. Add `wait()` *after* the action only when the next step needs the result to load (e.g., form opening).
+
+**Highlight timing**: `setHighlight(true)` enables auto-mode — each action function highlights the target for 500ms, then removes the highlight before performing the action. No manual `highlight()`/`unhighlight()` calls needed. Enable after title slide, disable before `stopRecording()`.
 
 ## Troubleshooting
 

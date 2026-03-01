@@ -258,6 +258,10 @@ await closeForm({ save: false });
 | `showTitleSlide(text, opts?)` | Полноэкранный титульный слайд (`\n` → перенос, `subtitle`, `background`) |
 | `hideTitleSlide()` | Убрать титульный слайд |
 | `isRecording()` | Идёт ли запись (boolean) |
+| `setHighlight(on)` | Включить/выключить авто-выделение элементов при действиях |
+| `isHighlightMode()` | Активен ли режим авто-выделения (boolean) |
+| `highlight(text)` | Ручное выделение элемента (по имени, fuzzy match) |
+| `unhighlight()` | Снять выделение |
 
 ## Клавиатурные сочетания
 

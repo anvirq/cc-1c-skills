@@ -286,8 +286,10 @@ Clear filters. Without arguments clears all, with `{ field }` clears specific ba
 #### `showCaption(text, opts?)` / `hideCaption()` → text overlay on page
 #### `showTitleSlide(text, opts?)` / `hideTitleSlide()` → full-screen title card (intro/outro)
 #### `isRecording()` → boolean
+#### `setHighlight(on)` / `isHighlightMode()` → auto-highlight mode for video
+#### `highlight(text)` / `unhighlight()` → manual element highlighting
 
-See [recording.md](recording.md) for setup (ffmpeg), API details, and examples.
+See [recording.md](recording.md) for setup (ffmpeg), highlight mode, API details, and examples.
 If `.v8-project.json` has `ffmpegPath`, pass it to `startRecording({ ffmpegPath })`.
 
 ## Common patterns
