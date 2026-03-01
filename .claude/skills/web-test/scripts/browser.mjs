@@ -2430,6 +2430,7 @@ export async function startRecording(outputPath, opts = {}) {
     '-c:v', 'libx264',            // H.264 codec
     '-preset', 'ultrafast',        // fast encoding
     '-pix_fmt', 'yuv420p',        // broad compatibility
+    '-color_range', 'pc',          // full range (0-255) — match JPEG input
     '-movflags', '+faststart',     // web-friendly MP4
     resolvedPath
   ], { stdio: ['pipe', 'ignore', 'pipe'] });
