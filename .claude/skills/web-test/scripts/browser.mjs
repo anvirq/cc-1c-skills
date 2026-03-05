@@ -1485,18 +1485,27 @@ export async function clickElement(text, { dblclick } = {}) {
   // For buttons that trigger server-side operations (post, write, etc.),
   // the DOM may stabilize BEFORE the server response arrives.
   // Use waitForSelector to detect error modal — this doesn't block the JS event loop.
+  // Skip for grid edit mode (e.g. "Добавить" row) — no server round-trip expected.
   if (target.kind === 'button') {
     const postForm = await page.evaluate(detectFormScript());
     if (postForm === formNum) {
-      // Form didn't change — server might still be processing.
-      // waitForSelector uses MutationObserver internally — doesn't block event loop.
-      try {
-        await page.waitForSelector(
-          '#modalSurface:not([style*="display: none"]), .balloon',
-          { state: 'visible', timeout: 10000 }
-        );
-      } catch {}
-      await waitForStable();
+      const inGridEdit = await page.evaluate(`(() => {
+        const f = document.activeElement;
+        if (!f || (f.tagName !== 'INPUT' && f.tagName !== 'TEXTAREA')) return false;
+        let n = f; while (n) { if (n.classList?.contains('grid')) return true; n = n.parentElement; }
+        return false;
+      })()`);
+      if (!inGridEdit) {
+        // Form didn't change — server might still be processing.
+        // waitForSelector uses MutationObserver internally — doesn't block event loop.
+        try {
+          await page.waitForSelector(
+            '#modalSurface:not([style*="display: none"]), .balloon',
+            { state: 'visible', timeout: 10000 }
+          );
+        } catch {}
+        await waitForStable();
+      }
     }
   }
 
@@ -1905,7 +1914,17 @@ export async function fillTableRow(fields, { tab, add, row } = {}) {
   // 2. Add new row if requested
   if (add) {
     await clickElement('Добавить');
-    await page.waitForTimeout(1000);
+    // Poll for edit mode (INPUT inside grid) instead of fixed 1000ms wait
+    for (let aw = 0; aw < 6; aw++) {
+      await page.waitForTimeout(150);
+      const ready = await page.evaluate(`(() => {
+        const f = document.activeElement;
+        if (!f || (f.tagName !== 'INPUT' && f.tagName !== 'TEXTAREA')) return false;
+        let n = f; while (n) { if (n.classList?.contains('grid')) return true; n = n.parentElement; }
+        return false;
+      })()`);
+      if (ready) break;
+    }
   }
 
   // 2b. Enter edit mode on existing row by dblclick
@@ -1953,12 +1972,16 @@ export async function fillTableRow(fields, { tab, add, row } = {}) {
     if (cellCoords.error) throw new Error(`fillTableRow: ${cellCoords.error}${cellCoords.total ? ' (total rows: ' + cellCoords.total + ')' : ''}`);
 
     await page.mouse.dblclick(cellCoords.x, cellCoords.y);
-    await page.waitForTimeout(500);
-
-    const inEdit = await page.evaluate(`(() => {
-      const f = document.activeElement;
-      return f && f.tagName === 'INPUT';
-    })()`);
+    // Poll for edit mode instead of fixed 500ms wait
+    let inEdit = false;
+    for (let dw = 0; dw < 5; dw++) {
+      await page.waitForTimeout(150);
+      inEdit = await page.evaluate(`(() => {
+        const f = document.activeElement;
+        return f && f.tagName === 'INPUT';
+      })()`);
+      if (inEdit) break;
+    }
     if (!inEdit) throw new Error(`fillTableRow: double-click on row ${row} did not enter edit mode`);
   }
 
