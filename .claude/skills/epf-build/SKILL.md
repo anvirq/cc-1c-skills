@@ -1,6 +1,6 @@
 ---
 name: epf-build
-description: Собрать внешнюю обработку 1С (EPF/ERF) из XML-исходников
+description: Собрать внешнюю обработку 1С (EPF/ERF) из XML-исходников. Используй когда пользователь просит собрать, скомпилировать обработку или получить EPF/ERF файл из исходников
 argument-hint: <ProcessorName>
 allowed-tools:
   - Bash
@@ -60,19 +60,12 @@ powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 <
 
 > `*` — опционально. Если не указано — автоматически создаётся временная база со заглушками метаданных
 
-## Коды возврата
-
-| Код | Описание                    |
-|-----|-----------------------------|
-| 0   | Успешная сборка             |
-| 1   | Ошибка (см. лог)           |
-
 ## Примеры
 
 ```powershell
 # Сборка обработки (файловая база)
-powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBasePath "C:\Bases\MyDB" -SourceFile "src\МояОбработка.xml" -OutputFile "build\МояОбработка.epf"
+powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBasePath "C:\Bases\MyDB" -SourceFile "src/МояОбработка.xml" -OutputFile "build/МояОбработка.epf"
 
 # Серверная база
-powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -SourceFile "src\МояОбработка.xml" -OutputFile "build\МояОбработка.epf"
+powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -SourceFile "src/МояОбработка.xml" -OutputFile "build/МояОбработка.epf"
 ```

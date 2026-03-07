@@ -1,6 +1,6 @@
 ---
 name: erf-build
-description: Собрать внешний отчёт 1С (ERF) из XML-исходников
+description: Собрать внешний отчёт 1С (ERF) из XML-исходников. Используй когда пользователь просит собрать, скомпилировать отчёт или получить ERF файл из исходников
 argument-hint: <ReportName>
 allowed-tools:
   - Bash
@@ -62,19 +62,12 @@ powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 <
 
 > `*` — опционально. Если не указано — автоматически создаётся временная база со заглушками метаданных
 
-## Коды возврата
-
-| Код | Описание                    |
-|-----|-----------------------------|
-| 0   | Успешная сборка             |
-| 1   | Ошибка (см. лог)           |
-
 ## Примеры
 
 ```powershell
 # Сборка отчёта (файловая база)
-powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBasePath "C:\Bases\MyDB" -SourceFile "src\МойОтчёт.xml" -OutputFile "build\МойОтчёт.erf"
+powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBasePath "C:\Bases\MyDB" -SourceFile "src/МойОтчёт.xml" -OutputFile "build/МойОтчёт.erf"
 
 # Серверная база
-powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -SourceFile "src\МойОтчёт.xml" -OutputFile "build\МойОтчёт.erf"
+powershell.exe -NoProfile -File .claude/skills/epf-build/scripts/epf-build.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -SourceFile "src/МойОтчёт.xml" -OutputFile "build/МойОтчёт.erf"
 ```

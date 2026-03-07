@@ -1,6 +1,6 @@
 ---
 name: erf-dump
-description: Разобрать ERF-файл отчёта 1С в XML-исходники
+description: Разобрать ERF-файл отчёта 1С в XML-исходники. Используй когда пользователь просит разобрать, декомпилировать отчёт, получить исходники из ERF файла
 argument-hint: <ErfFile>
 allowed-tools:
   - Bash
@@ -62,43 +62,12 @@ powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 <п
 
 > `*` — обязательно хотя бы одно подключение. Без базы скрипт завершится с ошибкой (dump в пустой базе безвозвратно теряет ссылочные типы)
 
-## Коды возврата
-
-| Код | Описание                    |
-|-----|-----------------------------|
-| 0   | Успешная разборка           |
-| 1   | Ошибка (см. лог)           |
-
-## Формат `-Format Hierarchical`
-
-Ключ `-Format Hierarchical` создаёт структуру каталогов:
-
-```
-<OutDir>/
-├── <Name>.xml                    # Корневой файл
-└── <Name>/
-    ├── Ext/
-    │   └── ObjectModule.bsl      # Модуль объекта (если есть)
-    ├── Forms/
-    │   ├── <FormName>.xml
-    │   └── <FormName>/
-    │       └── Ext/
-    │           ├── Form.xml
-    │           └── Form/
-    │               └── Module.bsl
-    └── Templates/
-        ├── <TemplateName>.xml
-        └── <TemplateName>/
-            └── Ext/
-                └── Template.<ext>
-```
-
 ## Примеры
 
 ```powershell
 # Разборка отчёта (файловая база)
-powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBasePath "C:\Bases\MyDB" -InputFile "build\МойОтчёт.erf" -OutputDir "src"
+powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBasePath "C:\Bases\MyDB" -InputFile "build/МойОтчёт.erf" -OutputDir "src"
 
 # Серверная база
-powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -InputFile "build\МойОтчёт.erf" -OutputDir "src"
+powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -InputFile "build/МойОтчёт.erf" -OutputDir "src"
 ```

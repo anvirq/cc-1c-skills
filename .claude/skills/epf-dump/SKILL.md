@@ -1,6 +1,6 @@
 ---
 name: epf-dump
-description: Разобрать EPF-файл обработки 1С (EPF/ERF) в XML-исходники
+description: Разобрать EPF-файл обработки 1С (EPF/ERF) в XML-исходники. Используй когда пользователь просит разобрать, декомпилировать обработку, получить исходники из EPF/ERF файла
 argument-hint: <EpfFile>
 allowed-tools:
   - Bash
@@ -60,43 +60,12 @@ powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 <п
 
 > `*` — обязательно хотя бы одно подключение. Без базы скрипт завершится с ошибкой (dump в пустой базе безвозвратно теряет ссылочные типы)
 
-## Коды возврата
-
-| Код | Описание                    |
-|-----|-----------------------------|
-| 0   | Успешная разборка           |
-| 1   | Ошибка (см. лог)           |
-
-## Формат `-Format Hierarchical`
-
-Ключ `-Format Hierarchical` создаёт структуру каталогов:
-
-```
-<OutDir>/
-├── <Name>.xml                    # Корневой файл
-└── <Name>/
-    ├── Ext/
-    │   └── ObjectModule.bsl      # Модуль объекта (если есть)
-    ├── Forms/
-    │   ├── <FormName>.xml
-    │   └── <FormName>/
-    │       └── Ext/
-    │           ├── Form.xml
-    │           └── Form/
-    │               └── Module.bsl
-    └── Templates/
-        ├── <TemplateName>.xml
-        └── <TemplateName>/
-            └── Ext/
-                └── Template.<ext>
-```
-
 ## Примеры
 
 ```powershell
 # Разборка обработки (файловая база)
-powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBasePath "C:\Bases\MyDB" -InputFile "build\МояОбработка.epf" -OutputDir "src"
+powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBasePath "C:\Bases\MyDB" -InputFile "build/МояОбработка.epf" -OutputDir "src"
 
 # Серверная база
-powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -InputFile "build\МояОбработка.epf" -OutputDir "src"
+powershell.exe -NoProfile -File .claude/skills/epf-dump/scripts/epf-dump.ps1 -InfoBaseServer "srv01" -InfoBaseRef "MyDB" -UserName "Admin" -Password "secret" -InputFile "build/МояОбработка.epf" -OutputDir "src"
 ```
