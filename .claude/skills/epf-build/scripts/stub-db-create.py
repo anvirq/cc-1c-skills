@@ -1031,6 +1031,8 @@ def main():
                 write_bom(os.path.join(obj_dir, f'{obj_name}.xml'), obj_xml)
 
         print(f'Generated stub configuration with {len(type_map)} metadata types')
+        if register_columns:
+            print('WARNING: Register column categories (Dimension/Resource/Attribute) are guessed. Form field bindings may not survive round-trip through a real database.')
 
     # Create infobase
     print(f'Creating infobase: {temp_base}')

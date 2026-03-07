@@ -1247,6 +1247,9 @@ $propsXml		</Properties>$childObjLine
 	}
 
 	Write-Host "Generated stub configuration with $($typeMap.Count) metadata types"
+	if ($registerColumns.Count -gt 0) {
+		Write-Host "WARNING: Register column categories (Dimension/Resource/Attribute) are guessed. Form field bindings may not survive round-trip through a real database." -ForegroundColor Yellow
+	}
 }
 
 # --- 5. Create infobase ---
