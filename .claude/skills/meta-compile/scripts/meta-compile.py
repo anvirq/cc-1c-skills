@@ -198,6 +198,10 @@ type_synonyms = {
     'задачассылка': 'TaskRef',
     'определяемыйтип': 'DefinedType',
     'definedtype': 'DefinedType',
+    # English lowercase ref synonyms
+    'catalogref': 'CatalogRef',
+    'documentref': 'DocumentRef',
+    'enumref': 'EnumRef',
 }
 
 def resolve_type_str(type_str):
@@ -251,6 +255,16 @@ def emit_type_content(indent, type_str):
         X(f'{indent}\t<v8:AllowedLength>Variable</v8:AllowedLength>')
         X(f'{indent}</v8:StringQualifiers>')
         return
+    # Number without params -> Number(10,0)
+    if type_str == 'Number':
+        X(f'{indent}<v8:Type>xs:decimal</v8:Type>')
+        X(f'{indent}<v8:NumberQualifiers>')
+        X(f'{indent}\t<v8:Digits>10</v8:Digits>')
+        X(f'{indent}\t<v8:FractionDigits>0</v8:FractionDigits>')
+        X(f'{indent}\t<v8:AllowedSign>Any</v8:AllowedSign>')
+        X(f'{indent}</v8:NumberQualifiers>')
+        return
+
     # Number(D,F) or Number(D,F,nonneg)
     m = re.match(r'^Number\((\d+),(\d+)(,nonneg)?\)$', type_str)
     if m:
@@ -283,6 +297,11 @@ def emit_type_content(indent, type_str):
         dt_name = m.group(1)
         X(f'{indent}<v8:TypeSet>cfg:DefinedType.{dt_name}</v8:TypeSet>')
         return
+    # ValueStorage
+    if type_str == 'ValueStorage':
+        X(f'{indent}<v8:Type>xs:base64Binary</v8:Type>')
+        return
+
     # Reference types — use local xmlns declaration for 1C compatibility
     m = re.match(r'^(CatalogRef|DocumentRef|EnumRef|ChartOfAccountsRef|ChartOfCharacteristicTypesRef|ChartOfCalculationTypesRef|ExchangePlanRef|BusinessProcessRef|TaskRef)\.(.+)$', type_str)
     if m:

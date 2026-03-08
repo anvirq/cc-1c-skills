@@ -185,6 +185,10 @@ $script:typeSynonyms["бизнеспроцессссылка"]            = "Bus
 $script:typeSynonyms["задачассылка"]                   = "TaskRef"
 $script:typeSynonyms["определяемыйтип"]              = "DefinedType"
 $script:typeSynonyms["definedtype"]                   = "DefinedType"
+# English lowercase ref synonyms
+$script:typeSynonyms["catalogref"]                    = "CatalogRef"
+$script:typeSynonyms["documentref"]                   = "DocumentRef"
+$script:typeSynonyms["enumref"]                       = "EnumRef"
 
 function Resolve-TypeStr {
 	param([string]$typeStr)
@@ -248,6 +252,17 @@ function Emit-TypeContent {
 		return
 	}
 
+	# Number without params → Number(10,0)
+	if ($typeStr -eq "Number") {
+		X "$indent<v8:Type>xs:decimal</v8:Type>"
+		X "$indent<v8:NumberQualifiers>"
+		X "$indent`t<v8:Digits>10</v8:Digits>"
+		X "$indent`t<v8:FractionDigits>0</v8:FractionDigits>"
+		X "$indent`t<v8:AllowedSign>Any</v8:AllowedSign>"
+		X "$indent</v8:NumberQualifiers>"
+		return
+	}
+
 	# Number(D,F) or Number(D,F,nonneg)
 	if ($typeStr -match '^Number\((\d+),(\d+)(,nonneg)?\)$') {
 		$digits = $Matches[1]
@@ -282,6 +297,12 @@ function Emit-TypeContent {
 	if ($typeStr -match '^DefinedType\.(.+)$') {
 		$dtName = $Matches[1]
 		X "$indent<v8:TypeSet>cfg:DefinedType.$dtName</v8:TypeSet>"
+		return
+	}
+
+	# ValueStorage
+	if ($typeStr -eq "ValueStorage") {
+		X "$indent<v8:Type>xs:base64Binary</v8:Type>"
 		return
 	}
 
