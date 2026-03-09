@@ -189,6 +189,23 @@ function Find-Similar {
 	return $result
 }
 
+# --- Resolve path ---
+if (-not [System.IO.Path]::IsPathRooted($RightsPath)) {
+	$RightsPath = Join-Path (Get-Location).Path $RightsPath
+}
+# A: Directory → Ext/Rights.xml
+if (Test-Path $RightsPath -PathType Container) {
+	$RightsPath = Join-Path (Join-Path $RightsPath "Ext") "Rights.xml"
+}
+# B1: Missing Ext/ (e.g. Roles/МояРоль/Rights.xml → Roles/МояРоль/Ext/Rights.xml)
+if (-not (Test-Path $RightsPath)) {
+	$fn = [System.IO.Path]::GetFileName($RightsPath)
+	if ($fn -eq "Rights.xml") {
+		$c = Join-Path (Join-Path (Split-Path $RightsPath) "Ext") $fn
+		if (Test-Path $c) { $RightsPath = $c }
+	}
+}
+
 # --- 3. Validate Rights.xml ---
 
 if (-not (Test-Path $RightsPath)) {

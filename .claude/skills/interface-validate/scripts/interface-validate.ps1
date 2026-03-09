@@ -14,6 +14,18 @@ $ErrorActionPreference = "Stop"
 if (-not [System.IO.Path]::IsPathRooted($CIPath)) {
 	$CIPath = Join-Path (Get-Location).Path $CIPath
 }
+# A: Directory → Ext/CommandInterface.xml
+if (Test-Path $CIPath -PathType Container) {
+	$CIPath = Join-Path (Join-Path $CIPath "Ext") "CommandInterface.xml"
+}
+# B1: Missing Ext/ (e.g. Subsystems/X/CommandInterface.xml → Subsystems/X/Ext/CommandInterface.xml)
+if (-not (Test-Path $CIPath)) {
+	$fn = [System.IO.Path]::GetFileName($CIPath)
+	if ($fn -eq "CommandInterface.xml") {
+		$c = Join-Path (Join-Path (Split-Path $CIPath) "Ext") $fn
+		if (Test-Path $c) { $CIPath = $c }
+	}
+}
 if (-not (Test-Path $CIPath)) {
 	Write-Host "[ERROR] File not found: $CIPath"
 	exit 1

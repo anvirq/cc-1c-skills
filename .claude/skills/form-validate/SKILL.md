@@ -30,8 +30,10 @@ allowed-tools:
 ## Команда
 
 ```powershell
-powershell.exe -NoProfile -File .claude/skills/form-validate/scripts/form-validate.ps1 -FormPath "<путь>"
+powershell.exe -NoProfile -File .claude/skills/form-validate/scripts/form-validate.ps1 -FormPath "<.../Forms/ИмяФормы>"
 ```
+
+Можно указать директорию формы — скрипт найдёт Ext/Form.xml автоматически.
 
 ## Проверки
 

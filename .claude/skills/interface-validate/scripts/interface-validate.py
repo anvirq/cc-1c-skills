@@ -94,6 +94,17 @@ def main():
     if not os.path.isabs(ci_path):
         ci_path = os.path.join(os.getcwd(), ci_path)
 
+    # A: Directory → Ext/CommandInterface.xml
+    if os.path.isdir(ci_path):
+        ci_path = os.path.join(ci_path, 'Ext', 'CommandInterface.xml')
+    # B1: Missing Ext/
+    if not os.path.exists(ci_path):
+        fn = os.path.basename(ci_path)
+        if fn == 'CommandInterface.xml':
+            c = os.path.join(os.path.dirname(ci_path), 'Ext', fn)
+            if os.path.exists(c):
+                ci_path = c
+
     if not os.path.exists(ci_path):
         print(f'[ERROR] File not found: {ci_path}')
         sys.exit(1)

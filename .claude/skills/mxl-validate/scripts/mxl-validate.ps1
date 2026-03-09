@@ -22,6 +22,26 @@ if (-not $TemplatePath) {
 	$TemplatePath = Join-Path (Join-Path (Join-Path (Join-Path (Join-Path $SrcDir $ProcessorName) "Templates") $TemplateName) "Ext") "Template.xml"
 }
 
+# A: Directory → Ext/Template.xml
+if (Test-Path $TemplatePath -PathType Container) {
+	$TemplatePath = Join-Path (Join-Path $TemplatePath "Ext") "Template.xml"
+}
+# B1: Missing Ext/ (e.g. Templates/Макет/Template.xml → Templates/Макет/Ext/Template.xml)
+if (-not (Test-Path $TemplatePath)) {
+	$fn = [System.IO.Path]::GetFileName($TemplatePath)
+	if ($fn -eq "Template.xml") {
+		$c = Join-Path (Join-Path (Split-Path $TemplatePath) "Ext") $fn
+		if (Test-Path $c) { $TemplatePath = $c }
+	}
+}
+# B2: Descriptor (Templates/Макет.xml → Templates/Макет/Ext/Template.xml)
+if (-not (Test-Path $TemplatePath) -and $TemplatePath.EndsWith(".xml")) {
+	$stem = [System.IO.Path]::GetFileNameWithoutExtension($TemplatePath)
+	$dir = Split-Path $TemplatePath
+	$c = Join-Path (Join-Path (Join-Path $dir $stem) "Ext") "Template.xml"
+	if (Test-Path $c) { $TemplatePath = $c }
+}
+
 if (-not (Test-Path $TemplatePath)) {
 	Write-Error "File not found: $TemplatePath"
 	exit 1

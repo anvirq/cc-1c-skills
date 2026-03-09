@@ -81,6 +81,24 @@ def main():
     if not os.path.isabs(template_path):
         template_path = os.path.join(os.getcwd(), template_path)
 
+    # A: Directory → Ext/Template.xml
+    if os.path.isdir(template_path):
+        template_path = os.path.join(template_path, 'Ext', 'Template.xml')
+    # B1: Missing Ext/ (e.g. Templates/Макет/Template.xml → Templates/Макет/Ext/Template.xml)
+    if not os.path.exists(template_path):
+        fn = os.path.basename(template_path)
+        if fn == 'Template.xml':
+            c = os.path.join(os.path.dirname(template_path), 'Ext', fn)
+            if os.path.exists(c):
+                template_path = c
+    # B2: Descriptor (Templates/Макет.xml → Templates/Макет/Ext/Template.xml)
+    if not os.path.exists(template_path) and template_path.endswith('.xml'):
+        stem = os.path.splitext(os.path.basename(template_path))[0]
+        parent = os.path.dirname(template_path)
+        c = os.path.join(parent, stem, 'Ext', 'Template.xml')
+        if os.path.exists(c):
+            template_path = c
+
     if not os.path.exists(template_path):
         print(f'File not found: {template_path}', file=sys.stderr)
         sys.exit(1)

@@ -35,8 +35,10 @@ allowed-tools:
 ## Команда
 
 ```powershell
-powershell.exe -NoProfile -File .claude/skills/mxl-validate/scripts/mxl-validate.ps1 -TemplatePath "<путь>"
+powershell.exe -NoProfile -File .claude/skills/mxl-validate/scripts/mxl-validate.ps1 -TemplatePath "<.../Templates/ИмяМакета>"
 ```
+
+Можно указать директорию макета — скрипт найдёт Ext/Template.xml автоматически.
 
 ## Проверки
 

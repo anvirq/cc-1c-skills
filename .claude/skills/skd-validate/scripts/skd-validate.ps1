@@ -16,11 +16,27 @@ $ErrorActionPreference = "Stop"
 
 # --- Resolve path ---
 
-if (-not $TemplatePath.EndsWith(".xml")) {
-	$candidate = Join-Path (Join-Path $TemplatePath "Ext") "Template.xml"
-	if (Test-Path $candidate) {
-		$TemplatePath = $candidate
+if (-not [System.IO.Path]::IsPathRooted($TemplatePath)) {
+	$TemplatePath = Join-Path (Get-Location).Path $TemplatePath
+}
+# A: Directory → Ext/Template.xml
+if (Test-Path $TemplatePath -PathType Container) {
+	$TemplatePath = Join-Path (Join-Path $TemplatePath "Ext") "Template.xml"
+}
+# B1: Missing Ext/ (e.g. Templates/СКД/Template.xml → Templates/СКД/Ext/Template.xml)
+if (-not (Test-Path $TemplatePath)) {
+	$fn = [System.IO.Path]::GetFileName($TemplatePath)
+	if ($fn -eq "Template.xml") {
+		$c = Join-Path (Join-Path (Split-Path $TemplatePath) "Ext") $fn
+		if (Test-Path $c) { $TemplatePath = $c }
 	}
+}
+# B2: Descriptor (Templates/СКД.xml → Templates/СКД/Ext/Template.xml)
+if (-not (Test-Path $TemplatePath) -and $TemplatePath.EndsWith(".xml")) {
+	$stem = [System.IO.Path]::GetFileNameWithoutExtension($TemplatePath)
+	$dir = Split-Path $TemplatePath
+	$c = Join-Path (Join-Path (Join-Path $dir $stem) "Ext") "Template.xml"
+	if (Test-Path $c) { $TemplatePath = $c }
 }
 
 if (-not (Test-Path $TemplatePath)) {

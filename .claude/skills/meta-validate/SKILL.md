@@ -33,7 +33,7 @@ allowed-tools:
 ## Команда
 
 ```powershell
-powershell.exe -NoProfile -File .claude/skills/meta-validate/scripts/meta-validate.ps1 -ObjectPath "<путь>"
+powershell.exe -NoProfile -File .claude/skills/meta-validate/scripts/meta-validate.ps1 -ObjectPath "<Catalogs/ИмяСправочника/ИмяСправочника.xml>"
 ```
 
 ## Поддерживаемые типы (23)

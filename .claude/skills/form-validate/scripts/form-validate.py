@@ -31,6 +31,27 @@ def main():
     detailed = args.Detailed
     max_errors = args.MaxErrors
 
+    if not os.path.isabs(form_path):
+        form_path = os.path.join(os.getcwd(), form_path)
+
+    # A: Directory → Ext/Form.xml
+    if os.path.isdir(form_path):
+        form_path = os.path.join(form_path, 'Ext', 'Form.xml')
+    # B1: Missing Ext/ (e.g. Forms/Форма/Form.xml → Forms/Форма/Ext/Form.xml)
+    if not os.path.exists(form_path):
+        fn = os.path.basename(form_path)
+        if fn == 'Form.xml':
+            c = os.path.join(os.path.dirname(form_path), 'Ext', fn)
+            if os.path.exists(c):
+                form_path = c
+    # B2: Descriptor (Forms/Форма.xml → Forms/Форма/Ext/Form.xml)
+    if not os.path.exists(form_path) and form_path.endswith('.xml'):
+        stem = os.path.splitext(os.path.basename(form_path))[0]
+        parent = os.path.dirname(form_path)
+        c = os.path.join(parent, stem, 'Ext', 'Form.xml')
+        if os.path.exists(c):
+            form_path = c
+
     if not os.path.isfile(form_path):
         print(f"File not found: {form_path}", file=sys.stderr)
         sys.exit(1)

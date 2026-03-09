@@ -193,6 +193,17 @@ def main():
     if not os.path.isabs(rights_path):
         rights_path = os.path.join(os.getcwd(), rights_path)
 
+    # A: Directory → Ext/Rights.xml
+    if os.path.isdir(rights_path):
+        rights_path = os.path.join(rights_path, 'Ext', 'Rights.xml')
+    # B1: Missing Ext/
+    if not os.path.exists(rights_path):
+        fn = os.path.basename(rights_path)
+        if fn == 'Rights.xml':
+            c = os.path.join(os.path.dirname(rights_path), 'Ext', fn)
+            if os.path.exists(c):
+                rights_path = c
+
     # --- Output helpers ---
     lines = []
     errors = 0

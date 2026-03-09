@@ -31,8 +31,10 @@ allowed-tools:
 ## Команда
 
 ```powershell
-powershell.exe -NoProfile -File '.claude/skills/subsystem-validate/scripts/subsystem-validate.ps1' -SubsystemPath '<путь>'
+powershell.exe -NoProfile -File ".claude/skills/subsystem-validate/scripts/subsystem-validate.ps1" -SubsystemPath "<Subsystems/ИмяПодсистемы>"
 ```
+
+Можно указать директорию подсистемы — скрипт найдёт XML-файл автоматически.
 
 ## Проверки (13)
 
